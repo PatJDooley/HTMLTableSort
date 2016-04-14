@@ -22,6 +22,16 @@ Attach column sort to every header cell (note that you need to specify "th" or "
 When the user clicks a header cell, the table will be sorted on that column. The sort will be 'stable'. That means that the original sort order 
 will be maintained within the sort. If the use clicks the same header cell again, without sorting on another column, the sort will be reversed.
 
+Tablesort recognizes multiple data formats and sorts accordingly.
+
+If a column only contains numeric fields, the sort will be numeric.
+
+If a column contains a recognized date format, the sort will be based on that date. Tablesort recognizes mm/dd/yy[yy], dd/mm/yyy[yy] and yy[yy]/mm/dd. Invalid dates, such as "2/29/2009" [mm/dd/yy[yy] format], will not throw an exception. 
+
+Invalid dates, such as "2/32/2009" [mm/dd/yy[yy] format], will not throw an exception but they will cause the column to be treated as a text column.
+
+We assume the server validates dates.
+
 Restore original order.
 
 "tablesort" remembers the original order of the table. You can restore the original order by omitting a column name.
