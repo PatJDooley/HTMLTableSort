@@ -30,7 +30,7 @@ Restore original order.
 
 Sort explicitly.
 
-If you want to sort a table based on some other event, all you have to do is specify the text of the column.
+If you want to sort a table based on some other event, all you have to do is specify the text of the column header.
 
         $('#sample').sortByColumn('Part Number');
 
