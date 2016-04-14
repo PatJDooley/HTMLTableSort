@@ -1,4 +1,4 @@
-# MyFunCoding
+# HTMLTableSort
 Stuff I've coded that others might like
 
 This is a jQuery plugin that makes an HTML table sortable by column. 
