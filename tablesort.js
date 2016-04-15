@@ -10,18 +10,26 @@
       //    // Attach "SortbyColumn" to each column header of the table.
       //    // Header row can be in a "thead" with "th" cells or just in a "tr" with "td" cells.
       //
-      //    $('.headerCell').click(function () {
-      //       SortByColumn('#hoftable', $(this).text());
+      // <script src="js/tablesort.min.js" type="text/javascript"></script>
+      //
+      // Attach sort to every header cell (note that you need to specify "th" or "td", depending on the table HTML.
+      //
+      //   $('#sample th').mousedown(function (e) {
+      //      $('#sample').sortByColumn($(this).text());
       //    });
       //
-      //    $('#HeaderTable th').click(function () {
-      //       SortByColumn('#HeaderTable', $(this).text());
-      //    });
+      // Restore original order.
+      //
+      // $('#sample').sortByColumn();
+      //
+      // Sort explicitly:
+      //
+      //   $('#sample').sortByColumn('Part Number');      
       //
       // First sort on a column is ascending; the second is descending.
       // This is reset if a different column is sorted in the interim.
       //
-      // SortByColumn recognizes Date columns [mm/dd/yyyy only] and Numeric columms
+      // SortByColumn recognizes Date columns [mm/dd/yy[yy], dd/mm/yy[yy] and yy[yy]/mm/dd] and Numeric columms
       // and sorts accordingly.
       //
       // Columns must contain data of the same type in every row to be sorted
@@ -65,30 +73,40 @@
       var RowData = function () {
          this.Seq = 0;
          this.Key = '';
-         this.KeyType = 0;  // 0 = string, 1 = number, 2 = date (mm/dd/yyyy), 3 - date (dd/mm/yyyy), 4 - date (yyyy/mm/dd)
+         this.KeyType = 0;  // 0 = string, 1 = number, 2 = date (mm/dd/yy[yy]), 3 - date (dd/mm/yy[yy]), 4 - date (yy[yy]/mm/dd)
          this.Cells = new Array();
       }
       var prevType = -1;
       this.find('tr').not(':first').each(function () {
-         var rowData = new RowData();
-         rowData.Seq = $(this).data('_seq_');
-         colX = -1;
-         $(this).children().each(function () {
-            colX++;
-            var cellValue = RemoveLineBreaksTrim($(this).text());
-            if (colX == sortCol) {
-               rowData.Key = cellValue;
-               if (prevType == 0) {
-                  rowData.KeyType = 0;
-               }
-               else {
-                  rowData.KeyType = GetType(cellValue);
-               }
-               prevType = rowData.KeyType;
-            }
-            rowData.Cells.push(cellValue);
-         });
-         tableData.push(rowData);
+		 //
+		 // Skip Footers
+		 if (!$(this).parent().is('tfoot')) {
+			 var rowData = new RowData();
+			 rowData.Seq = $(this).data('_seq_');
+			 colX = -1;
+			 $(this).children().each(function () {
+				colX++;
+				var cellValue = RemoveLineBreaksTrim($(this).text());
+				if (colX == sortCol) {
+				   rowData.Key = cellValue;
+				   if (prevType == 0) {
+					  rowData.KeyType = 0;
+				   }
+				   else {
+					  rowData.KeyType = GetType(cellValue);
+				   }
+				   if (rowData.KeyType == 1) {
+					   rowData.Key = cellValue.replace(/[^0-9.-]+/g,'');
+				   }
+				   else {
+					   rowData.Key = cellValue;	   
+				   }
+				   prevType = rowData.KeyType;
+				}				
+				rowData.Cells.push(cellValue);
+			 });
+			 tableData.push(rowData);
+		 }
       });
       //
       // Check data types consistent within a column. If there
@@ -116,12 +134,13 @@
                      SetStats(parts, 1, validDays, validMonths, validYears);
                      SetStats(parts, 2, validDays, validMonths, validYears);
                   }
-                  var dayPos = MaxIndex(validDays);
-                  validYears[dayPos] = 0;
-                  validMonths[dayPos] = 0;
                   var monthPos = MaxIndex(validMonths);
-                  validYears[monthPos] = 0;
+                  validYears[monthPos] = -1;
+                  validDays[monthPos] = -1;
+                  var dayPos = MaxIndex(validDays);
+                  validYears[dayPos] = -1;
                   var yearPos = MaxIndex(validYears);
+
                   if (monthPos == 0 && dayPos == 1 && yearPos == 2) {
                      tableData[0].KeyType = 2;
                   }
@@ -146,7 +165,7 @@
       if (colhead) {
          tableData.sort(function (a, b) {
             switch (a.KeyType) {
-               case 0:
+               case 0: // string
                   if (a.Key > b.Key) {
                      return sortAsc ? 1 : -1;
                   }
@@ -154,7 +173,7 @@
                      return sortAsc ? -1 : 1;
                   }
                   break;
-               case 1:
+               case 1: // Numeric
                   if (parseFloat(a.Key) > parseFloat(b.Key)) {
                      return sortAsc ? 1 : -1;
                   }
@@ -162,7 +181,7 @@
                      return sortAsc ? -1 : 1;
                   }
                   break;
-               default:
+               default: // Date
                   var res = DateCompare(a.KeyType, a.Key, b.Key);
                   if (res == 1) {
                      return sortAsc ? 1 : -1;
@@ -187,14 +206,16 @@
       }
       rowX = -1;
       this.find('tr').not(':first').each(function () {
-         rowX++;
-         var rowData = tableData[rowX];
-         $(this).data('_seq_', rowData.Seq);
-         colX = -1;
-         $(this).children().each(function () {
-            colX++;
-            $(this).text(rowData.Cells[colX]);
-         });
+		 if (!$(this).parent().is('tfoot')) {		  
+			 rowX++;
+			 var rowData = tableData[rowX];
+			 $(this).data('_seq_', rowData.Seq);
+			 colX = -1;
+			 $(this).children().each(function () {
+				colX++;
+				$(this).text(rowData.Cells[colX]);
+			 });
+		 }
       });
       return this;
    }
@@ -224,7 +245,8 @@
       return maxIndex;
    }
    var GetType = function (cellValue) {
-      if (cellValue.indexOf('/') == -1 && parseFloat(cellValue)) {
+	  var numValue = cellValue.replace(/[^0-9.-]+/g,'');
+      if (cellValue.indexOf('/') == -1 && parseFloat(numValue)) {
          return 1;
       }
       var parts = cellValue.split('/');
@@ -249,10 +271,23 @@
       return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
    }
    var DateCompare = function (keyType, dateA, dateB) {
-      // 2 = date (mm/dd/yyyy), 3 - date (dd/mm/yyyy), 4 - date (yyyy/mm/dd)
-      yearPos = keyType == 4 ? 0 : 2;
-      monthPos = keyType == 2 ? 1 : 2;
-      dayPos = keyType == 2 ? 0 : keyType = 3 ? 0 : 2;
+      // 2 = date (mm/dd/yy[yy]), 3 - date (dd/mm/yy[yy]), 4 - date (yy[yy]/mm/dd)
+      var yearPos = 2;
+      var monthPos =  0;
+      var dayPos = 1;
+      switch (keyType) {
+         case 3:
+            yearPos = 2;
+            monthPos = 1;
+            dayPos = 0;
+            break;
+
+         case 4:
+            yearPos = 0;
+            monthPos = 1;
+            dayPos = 2;
+            break;
+      }
       var partsA = dateA.split('/');
       var partsB = dateB.split('/');
       // Years

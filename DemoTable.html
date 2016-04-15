@@ -1,0 +1,766 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <meta charset="utf-8" />
+   <title></title>
+   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" type="text/javascript"></script>
+   <script src="js/tablesort.js" type="text/javascript"></script>
+   <script type="text/javascript">
+   <!--
+      var _DateFormat = 2;
+
+      var Thousands = function (value) {
+         value = value.toString();
+         var newValue = '';
+         var j = 0;
+         for (var i = value.length - 1; i >= 0; i--) {
+            j++;
+            newValue = value.substr(i, 1) + newValue;
+            if (j % 3 == 0 && i > 0) {
+               newValue = ',' + newValue;
+            }
+         }
+         return newValue;
+      }
+      var FixDate = function (dateFormat) {
+         var columnTh = $("#SampleTable th:contains('Date Received')");
+         var columnIndex = columnTh.index() + 1;
+         $('table tr td:nth-child(' + columnIndex + ')').each(function () {
+            var parts = $(this).text().split('/');
+            if (parts.length != 3) {
+               return false;
+            }
+            var dd, mm, yyyy;
+            var result;
+            switch (_DateFormat) {
+               case 2:
+                  dd = parts[1];
+                  mm = parts[0];
+                  yyyy = parts[2];
+                  break;
+               case 3:
+                  dd = parts[0];
+                  mm = parts[1];
+                  yyyy = parts[2];
+                  break;
+               case 4:
+                  dd = parts[2];
+                  mm = parts[1];
+                  yyyy = parts[0];
+                  break;
+            }
+            switch (dateFormat) {
+               case 2:
+                  result = mm + '/' + dd + '/' + yyyy;
+                  break;
+               case 3:
+                  result = dd + '/' + mm + '/' + yyyy;
+                  break;
+               case 4:
+                  result = yyyy + '/' + mm + '/' + dd;
+                  break;
+            }
+            $(this).text(result.replace(/\s+/g, ''));
+         });
+         _DateFormat = dateFormat;
+      };
+   // --></script>
+   <style>
+      body {
+         font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      }
+
+      h1 {
+         margin-left: 160px;
+         letter-spacing: 3px;
+         color: darkblue;
+      }
+
+      .tablebody {
+         background-color: #8888ff;
+         border-spacing: 1px;
+         border-collapse: separate;
+      }
+
+      .cellRight {
+         text-align: right;
+      }
+
+      .normalRow {
+         background-color: white;
+      }
+
+      .altRow {
+         background-color: lightblue;
+      }
+
+      thead, tfoot {
+         background-color: darkblue;
+         color: lightblue;
+      }
+
+      .bodyCell {
+         padding-left: 4px;
+         padding-right: 10px;
+         padding-top: 4px;
+         padding-bottom: 4px;
+      }
+   </style>
+</head>
+<body>
+   <h1>TableSort JQuery Plugin Demonstation</h1>
+   <table id="SampleTable" class="tablebody">
+      <thead>
+         <tr class="headerRow">
+            <th class="bodyCell">
+               Vehicle Brand
+            </th>
+            <th class="bodyCell">
+               Model
+            </th>
+            <th class="bodyCell">
+               Year
+            </th>
+            <th class="bodyCell">
+               Price
+            </th>
+            <th class="bodyCell">
+               Miles
+            </th>
+            <th class="bodyCell">
+               Date Received
+            </th>
+            <th class="bodyCell">
+               Color
+            </th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr rowid="0" class="normalRow">
+            <td class="bodyCell" title="">
+               Volkswagen
+            </td>
+            <td class="bodyCell">
+               Turbo Beetle
+            </td>
+            <td class="bodyCell cellRight">
+               2013
+            </td>
+            <td class="bodyCell cellRight">
+               $12,399
+            </td>
+            <td class="bodyCell cellRight">
+               28,500
+            </td>
+            <td class="bodyCell">
+               5/12/2015
+            </td>
+            <td class="bodyCell">
+               PURE WHITE
+            </td>
+         </tr>
+         <tr rowid="1" class="altRow">
+            <td class="bodyCell">
+               Volkswagen
+            </td>
+            <td class="bodyCell">
+               Golf SportWagen
+            </td>
+            <td class="bodyCell cellRight">
+               2016
+            </td>
+            <td class="bodyCell cellRight">
+               $24,000
+            </td>
+            <td class="bodyCell cellRight">
+               7,000
+            </td>
+            <td class="bodyCell">
+               7/8/2015
+            </td>
+            <td class="bodyCell">
+               HABANERO ORANGE METALLIC
+            </td>
+         </tr>
+
+
+         <tr rowid="0" class="normalRow">
+            <td class="bodyCell">
+               Volkswagen
+            </td>
+            <td class="bodyCell">
+               Beetle Convertible R-Line 2.0T
+            </td>
+            <td class="bodyCell cellRight">
+               2015
+            </td>
+            <td class="bodyCell cellRight">
+               $25,995
+            </td>
+            <td class="bodyCell cellRight">
+               100
+            </td>
+            <td class="bodyCell">
+               12/31/2015
+            </td>
+            <td class="bodyCell">
+               TORNADO RED
+            </td>
+         </tr>
+         <tr rowid="1" class="altRow">
+            <td class="bodyCell">
+               Volkswagen
+            </td>
+            <td class="bodyCell">
+               Turbo Beetle
+            </td>
+            <td class="bodyCell cellRight">
+               2013
+            </td>
+            <td class="bodyCell cellRight">
+               $12,345
+            </td>
+            <td class="bodyCell cellRight">
+               27,234
+            </td>
+            <td class="bodyCell">
+               5/12/2015
+            </td>
+            <td class="bodyCell">
+               PLATINUM GREY METALLIC
+            </td>
+         </tr>
+         <tr rowid="0" class="normalRow">
+            <td class="bodyCell">
+               Volkswagen
+            </td>
+            <td class="bodyCell">
+               Turbo Beetle
+            </td>
+            <td class="bodyCell cellRight">
+               2013
+            </td>
+            <td class="bodyCell cellRight">
+               $12,437
+            </td>
+            <td class="bodyCell cellRight">
+               26,321
+            </td>
+            <td class="bodyCell">
+               5/12/2015
+            </td>
+            <td class="bodyCell">
+               Silver
+            </td>
+         </tr>
+         <tr rowid="1" class="altRow">
+            <td class="bodyCell">
+               Mercedes Benz
+            </td>
+            <td class="bodyCell">
+               C-Class Sedan
+            </td>
+            <td class="bodyCell cellRight">
+               2013
+            </td>
+            <td class="bodyCell cellRight">
+               $22,000
+            </td>
+            <td class="bodyCell cellRight">
+               23,600
+            </td>
+            <td class="bodyCell">
+               5/12/2015
+            </td>
+            <td class="bodyCell">
+               Cardinal Red Metallic
+            </td>
+         </tr>
+         <tr rowid="0" class="normalRow">
+            <td class="bodyCell">
+               Mercedes Benz
+            </td>
+            <td class="bodyCell">
+               E-Class sedan
+            </td>
+            <td class="bodyCell cellRight">
+               2016
+            </td>
+            <td class="bodyCell cellRight">
+               $53,000
+            </td>
+            <td class="bodyCell cellRight">
+               31,333
+            </td>
+            <td class="bodyCell">
+               5/12/2015
+            </td>
+            <td class="bodyCell">
+               designo Cardinal Red Metallic
+            </td>
+         </tr>
+         <tr rowid="1" class="altRow">
+            <td class="bodyCell">
+               Mercedes Benz
+            </td>
+            <td class="bodyCell">
+               S-Class Sedan
+            </td>
+            <td class="bodyCell cellRight">
+               2015
+            </td>
+            <td class="bodyCell cellRight">
+               $11,999
+            </td>
+            <td class="bodyCell cellRight">
+               17,000
+            </td>
+            <td class="bodyCell">
+               5/12/2015
+            </td>
+            <td class="bodyCell">
+               Indigo Blue Metallic
+            </td>
+         </tr>
+         <tr rowid="0" class="normalRow">
+            <td class="bodyCell">
+               Mercedes Benz
+            </td>
+            <td class="bodyCell">
+               CLA250 4MATIC Coupe
+            </td>
+            <td class="bodyCell cellRight">
+               2016
+            </td>
+            <td class="bodyCell cellRight">
+               $40,000
+            </td>
+            <td class="bodyCell cellRight">
+               700
+            </td>
+            <td class="bodyCell">
+               5/12/2015
+            </td>
+            <td class="bodyCell">
+               Northern Lights Violet Metallic
+            </td>
+         </tr>
+         <tr rowid="1" class="altRow">
+            <td class="bodyCell">
+               Mercedes Benz
+            </td>
+            <td class="bodyCell">
+               S-Class Coupe
+            </td>
+            <td class="bodyCell cellRight">
+               2016
+            </td>
+            <td class="bodyCell cellRight">
+               $122,000
+            </td>
+            <td class="bodyCell cellRight">
+               24,001
+            </td>
+            <td class="bodyCell">
+               5/12/2015
+            </td>
+            <td class="bodyCell">
+               designo Magno Alanite Grey (matte)
+            </td>
+         </tr>
+         <tr rowid="0" class="normalRow">
+            <td class="bodyCell">
+               Mercedes Benz
+            </td>
+            <td class="bodyCell">
+               GLC SUV
+            </td>
+            <td class="bodyCell cellRight">
+               2016
+            </td>
+            <td class="bodyCell cellRight">
+               $39,000
+            </td>
+            <td class="bodyCell cellRight">
+               12
+            </td>
+            <td class="bodyCell">
+               5/12/2015
+            </td>
+            <td class="bodyCell">
+               designo Magno Dakota Brown (matte)
+            </td>
+         </tr>
+         <tr rowid="1" class="altRow">
+            <td class="bodyCell">
+               Mercedes Benz
+            </td>
+            <td class="bodyCell">
+               GLC SUV
+            </td>
+            <td class="bodyCell cellRight">
+               2016
+            </td>
+            <td class="bodyCell cellRight">
+               $42,000
+            </td>
+            <td class="bodyCell cellRight">
+               27,943
+            </td>
+            <td class="bodyCell">
+               5/11/2016
+            </td>
+            <td class="bodyCell">
+               Iridium Silver Metallic
+            </td>
+         </tr>
+         <tr rowid="0" class="normalRow">
+            <td class="bodyCell">
+               Mercedes Benz
+            </td>
+            <td class="bodyCell">
+               G-Class SUV
+            </td>
+            <td class="bodyCell cellRight">
+               2017
+            </td>
+            <td class="bodyCell cellRight">
+               $121,000
+            </td>
+            <td class="bodyCell cellRight">
+               6
+            </td>
+            <td class="bodyCell">
+               12/12/2015
+            </td>
+            <td class="bodyCell">
+               Jade Green Metallic
+            </td>
+         </tr>
+         <tr rowid="1" class="altRow">
+            <td class="bodyCell">
+               Mercedes Benz
+            </td>
+            <td class="bodyCell">
+               GLE Coupe
+            </td>
+            <td class="bodyCell cellRight">
+               2017
+            </td>
+            <td class="bodyCell cellRight">
+               $72,000
+            </td>
+            <td class="bodyCell cellRight">
+               121
+            </td>
+            <td class="bodyCell">
+               5/12/2015
+            </td>
+            <td class="bodyCell">
+               Diamond Silver Metallic
+            </td>
+         </tr>
+         <tr rowid="0" class="normalRow">
+            <td class="bodyCell">
+               Audi
+            </td>
+            <td class="bodyCell">
+               A3
+            </td>
+            <td class="bodyCell cellRight">
+               2016
+            </td>
+            <td class="bodyCell cellRight">
+               $30,000
+            </td>
+            <td class="bodyCell cellRight">
+               21
+            </td>
+            <td class="bodyCell">
+               12/22/2015
+            </td>
+            <td class="bodyCell">
+               Brilliant Black
+            </td>
+         </tr>
+         <tr rowid="1" class="altRow">
+            <td class="bodyCell">
+               Audi
+            </td>
+            <td class="bodyCell">
+               R8
+            </td>
+            <td class="bodyCell cellRight">
+               2017
+            </td>
+            <td class="bodyCell cellRight">
+               $172,000
+            </td>
+            <td class="bodyCell cellRight">
+               10
+            </td>
+            <td class="bodyCell">
+               5/12/2016
+            </td>
+            <td class="bodyCell">
+               Vegas Yellow
+            </td>
+         </tr>
+         <tr rowid="0" class="normalRow">
+            <td class="bodyCell">
+               Audi
+            </td>
+            <td class="bodyCell">
+               S7
+            </td>
+            <td class="bodyCell cellRight">
+               2017
+            </td>
+            <td class="bodyCell cellRight">
+               $12,199
+            </td>
+            <td class="bodyCell cellRight">
+               14,876
+            </td>
+            <td class="bodyCell">
+               11/12/2016
+            </td>
+            <td class="bodyCell">
+               Moonlight Blue Metallic
+            </td>
+         </tr>
+         <tr rowid="1" class="altRow">
+            <td class="bodyCell">
+               Audi
+            </td>
+            <td class="bodyCell">
+               A7
+            </td>
+            <td class="bodyCell cellRight">
+               2015
+            </td>
+            <td class="bodyCell cellRight">
+               $62,000
+            </td>
+            <td class="bodyCell cellRight">
+               27,900
+            </td>
+            <td class="bodyCell">
+               11/12/2016
+            </td>
+            <td class="bodyCell">
+               Sepang Blue Pearl
+            </td>
+         </tr>
+         <tr rowid="0" class="normalRow">
+            <td class="bodyCell">
+               Audi
+            </td>
+            <td class="bodyCell">
+               A4
+            </td>
+            <td class="bodyCell cellRight">
+               2013
+            </td>
+            <td class="bodyCell cellRight">
+               $12,342
+            </td>
+            <td class="bodyCell cellRight">
+               67,000
+            </td>
+            <td class="bodyCell">
+               5/12/2015
+            </td>
+            <td class="bodyCell">
+               Silver
+            </td>
+         </tr>
+         <tr rowid="1" class="altRow">
+            <td class="bodyCell">
+               Audi
+            </td>
+            <td class="bodyCell">
+               A6
+            </td>
+            <td class="bodyCell cellRight">
+               2007
+            </td>
+            <td class="bodyCell cellRight">
+               $12,899
+            </td>
+            <td class="bodyCell cellRight">
+               127,000
+            </td>
+            <td class="bodyCell">
+               5/11/2015
+            </td>
+            <td class="bodyCell">
+               oolong Grey Metallic
+            </td>
+         </tr>
+         <tr rowid="0" class="normalRow">
+            <td class="bodyCell">
+               Audi
+            </td>
+            <td class="bodyCell">
+               TTS
+            </td>
+            <td class="bodyCell cellRight">
+               2017
+            </td>
+            <td class="bodyCell cellRight">
+               $52,000
+            </td>
+            <td class="bodyCell cellRight">
+               2
+            </td>
+            <td class="bodyCell">
+               5/12/2016
+            </td>
+            <td class="bodyCell">
+               Tango Red Metallic
+            </td>
+         </tr>
+         <tr rowid="1" class="altRow">
+            <td class="bodyCell">
+               Audi
+            </td>
+            <td class="bodyCell">
+               100
+            </td>
+            <td class="bodyCell cellRight">
+               1981
+            </td>
+            <td class="bodyCell cellRight">
+               $2,000
+            </td>
+            <td class="bodyCell cellRight">
+               227,000
+            </td>
+            <td class="bodyCell">
+               11/1/2015
+            </td>
+            <td class="bodyCell">
+               Blue
+            </td>
+         </tr>
+         <tr rowid="0" class="normalRow">
+            <td class="bodyCell">
+               Chevrolet
+            </td>
+            <td class="bodyCell">
+               Camaro 6.2L V8 engine
+            </td>
+            <td class="bodyCell cellRight">
+               2016
+            </td>
+            <td class="bodyCell cellRight">
+               $62,000
+            </td>
+            <td class="bodyCell cellRight">
+               2,398
+            </td>
+            <td class="bodyCell">
+               5/12/2015
+            </td>
+            <td class="bodyCell">
+               Red Hot
+            </td>
+         </tr>
+         <tr rowid="1" class="altRow">
+            <td class="bodyCell">
+               Chevrolet
+            </td>
+            <td class="bodyCell">
+               Corvette Z06
+            </td>
+            <td class="bodyCell cellRight">
+               2016
+            </td>
+            <td class="bodyCell cellRight">
+               $80,000
+            </td>
+            <td class="bodyCell cellRight">
+               70
+            </td>
+            <td class="bodyCell">
+               4/1/2016
+            </td>
+            <td class="bodyCell">
+               Long Beach Red Metallic Tintcoat
+            </td>
+         </tr>
+
+      </tbody>
+      <tfoot>
+         <tr>
+            <td class="bodyCell">
+               Totals
+            </td>
+            <td class="bodyCell">
+               &nbsp;
+            </td>
+            <td class="bodyCell cellRight">
+               &nbsp;
+            </td>
+            <td class="bodyCell cellRight">
+               &nbsp;
+            </td>
+            <td class="bodyCell cellRight">
+               &nbsp;
+            </td>
+            <td class="bodyCell">
+               &nbsp;
+            </td>
+            <td class="bodyCell">
+               &nbsp;
+            </td>
+         </tr>
+      </tfoot>
+   </table>
+   <p>
+      <button onclick="$('#SampleTable').sortByColumn();">Restore Original Table Order</button>
+      <button onclick="FixDate(2);">US Date Format</button>
+      <button onclick="FixDate(3);">UK Date Format</button>
+      <button onclick="FixDate(4);">Euro Date Format</button>
+   </p>
+   <script type="text/javascript">
+   <!--
+       $(document).ready(function () {
+         $('#SampleTable th').click(function (e) {
+            $('#SampleTable').sortByColumn($(this).text());
+         });
+          //  Ignore Ignore Ignore Ignore Ignore Ignore Ignore
+          //
+          // This code is specific to the demonstration. It
+          // has nothing to do with TableSort functionality.
+         var columnTh = $("#SampleTable th:contains('Price')");
+         var columnIndex = columnTh.index() + 1;
+         var sumPrice = 0;
+         $('table tr td:nth-child(' + columnIndex + ')').each(function () {
+            var numValue = $(this).text().replace(/[^0-9.-]+/g, '');
+            if (parseFloat(numValue)) {
+               sumPrice += parseFloat(numValue);
+            }
+            else {
+               $(this).text("$" + Thousands(sumPrice));
+            };
+         });
+         columnTh = $("#SampleTable th:contains('Miles')");
+         columnIndex = columnTh.index() + 1;
+         var sumMiles = 0;
+         $('table tr td:nth-child(' + columnIndex + ')').each(function () {
+            var numValue = $(this).text().replace(/[^0-9.-]+/g, '');
+            if (parseFloat(numValue)) {
+               sumMiles += parseFloat(numValue);
+            }
+            else {
+               $(this).text(Thousands(sumMiles));
+            };
+         });
+          //  End Ignore Ignore Ignore Ignore Ignore Ignore Ignore
+       });
+   // --></script>
+</body>
+</html>
